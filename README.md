@@ -5,11 +5,11 @@ Este sistema, desenvolvido em Flutter, é projetado para facilitar o gerenciamen
 ## 📌 Screenshots
 
 <div style="display:flex; justify-content:center;">
-    <img src="./screenshots/tela-inicial.png" alt="Tela inicial" width="250">
-    <img src="./screenshots/editar-produto.png" alt="Editar produto" width="250">
-    <img src="./screenshots/adicionar-produto.png" alt="Adicionar produto" width="250">
-    <img src="./screenshots/buscar-produto.png" alt="Busca do produto pelo pad" width="250">
-    <img src="./screenshots/buscar-produto2.png" alt="Busca do produto pelo pad" width="250">
+    <img src=".assets/screenshots/tela-inicial.png" alt="Tela inicial" width="250">
+    <img src=".assets/screenshots/editar-produto.png" alt="Editar produto" width="250">
+    <img src=".assets/screenshots/adicionar-produto.png" alt="Adicionar produto" width="250">
+    <img src=".assets/screenshots/buscar-produto.png" alt="Busca do produto pelo pad" width="250">
+    <img src=".assets/screenshots/buscar-produto2.png" alt="Busca do produto pelo pad" width="250">
 </div>
 
 ## 📌 Funcionalidades Principais
