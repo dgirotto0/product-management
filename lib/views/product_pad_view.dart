@@ -35,7 +35,7 @@ class _ProductPadViewState extends State<ProductPadView> {
 
       final imageBase64 = base64Encode(bytes.buffer.asUint8List());
 
-      const apiKey = 'AIzaSyA_6SkupboP69oUXtUfMePLc6O2-X9GZFU';
+      const apiKey = 'YOUR_API'; 
       const url = 'https://vision.googleapis.com/v1/images:annotate?key=$apiKey';
 
       final response = await http.post(
