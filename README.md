@@ -26,8 +26,7 @@ Este sistema, desenvolvido em Flutter, é projetado para facilitar o gerenciamen
 
 ## Melhorias Futuras
 - Aplicativo Integrado para Celular: Desenvolver uma versão mobile do sistema, permitindo que o controle de produtos e preços seja feito na palma da mão, com sincronização em tempo real com o banco de dados principal.
-- Integração com Inteligência Artificial: Implementar uma recomendação automática de ajuste de preços baseada em histórico de vendas, tendências de mercado e sazonalidade, ajudando a otimizar os lucros e ajustar os preços de acordo com a demanda.
+-  Integração com Inteligência Artificial: Implementar uma recomendação automática de ajuste de preços baseada em histórico de vendas, tendências de mercado e sazonalidade, ajudando a otimizar os lucros e ajustar os preços de acordo com a demanda.
 
 ## Contribuições
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests para melhorias.
->>>>>>> dab1184f11a001275b4c46e275e81e14e9464f74
