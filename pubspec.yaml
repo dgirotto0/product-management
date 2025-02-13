@@ -47,6 +47,8 @@ dependencies:
   google_ml_kit: ^0.18.0
   window_manager: ^0.4.2
   msix: ^3.16.8
+  google_mlkit_text_recognition: ^0.13.1
+  bitsdojo_window: ^0.1.6
 
 dev_dependencies:
   flutter_test:

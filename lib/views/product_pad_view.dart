@@ -24,7 +24,7 @@ class _ProductPadViewState extends State<ProductPadView> {
   String _productFilter = '';
   bool _canGoForward = false;
 
-  void _recognizeText() async {
+  Future<void> _recognizeText() async {
     try {
       final image = await _controller.toImage();
       final bytes = await image?.toByteData(format: ImageByteFormat.png);
@@ -35,11 +35,14 @@ class _ProductPadViewState extends State<ProductPadView> {
 
       final imageBase64 = base64Encode(bytes.buffer.asUint8List());
 
-      const apiKey = 'YOUR_API'; 
-      const url = 'https://vision.googleapis.com/v1/images:annotate?key=$apiKey';
+      // Substitua pela sua API Key do Google Cloud
+      const apiKey = 'AIzaSyCuNvhvWbttKLKz1GbybaeivEk8XCguEbY';
+      final url = Uri.parse(
+        'https://vision.googleapis.com/v1/images:annotate?key=$apiKey',
+      );
 
       final response = await http.post(
-        Uri.parse(url),
+        url,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -62,14 +65,18 @@ class _ProductPadViewState extends State<ProductPadView> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final textAnnotations = data['responses'][0]['textAnnotations'] as List;
-        if (textAnnotations.isNotEmpty) {
+        final textAnnotations =
+            data['responses'][0]['textAnnotations'] as List?;
+        if (textAnnotations != null && textAnnotations.isNotEmpty) {
           final text = textAnnotations[0]['description'] as String;
           setState(() {
-            _recognizedText = text.trim().toUpperCase().replaceAll(' ', '').
-                                                        replaceAll('|', '').
-                                                        replaceAll('\\', '').
-                                                        replaceAll('ç', '');
+            _recognizedText = text
+                .trim()
+                .toUpperCase()
+                .replaceAll(' ', '')
+                .replaceAll('|', '')
+                .replaceAll('\\', '')
+                .replaceAll('ç', '');
           });
           _findProductDetails(_recognizedText);
         } else {
@@ -81,8 +88,10 @@ class _ProductPadViewState extends State<ProductPadView> {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erro ao reconhecer texto: Erro na API do Google Cloud Vision'),
+          SnackBar(
+            content: Text(
+              'Erro ao reconhecer texto: ${response.body}',
+            ),
           ),
         );
       }
@@ -94,7 +103,8 @@ class _ProductPadViewState extends State<ProductPadView> {
   }
 
   void _findProductDetails(String productName) {
-    final productProvider = Provider.of<ProductProvider>(context, listen: false);
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
 
     List<String> tablesToSearch = [
       'tb_filtro_ar',
@@ -105,16 +115,15 @@ class _ProductPadViewState extends State<ProductPadView> {
 
     for (String tableName in tablesToSearch) {
       try {
-        final product = productProvider.getProductsByTable(tableName).firstWhere(
-              (product) =>
-                  product.filtro?.replaceAll(' ', '').toUpperCase().trim() ==
-                  productName
-        );
+        final product = productProvider
+            .getProductsByTable(tableName)
+            .firstWhere((product) =>
+                product.filtro?.replaceAll(' ', '').toUpperCase().trim() ==
+                productName);
         setState(() {
           _productFilter = product.filtro ?? 'Não encontrado';
           _productPrice = product.valor?.toStringAsFixed(2) ?? 'Não encontrado';
         });
-        print(productName);
         return;
       } catch (e) {
         continue;
@@ -204,7 +213,10 @@ class _ProductPadViewState extends State<ProductPadView> {
             const SizedBox(height: 20),
             Text(
               'Texto reconhecido: $_recognizedText',
-              style: const TextStyle(fontSize: 20, color: Color.fromARGB(255, 250, 151, 0)),
+              style: const TextStyle(
+                fontSize: 22,
+                color: Color.fromARGB(255, 250, 151, 0),
+              ),
             ),
             const SizedBox(height: 20),
             Row(
@@ -219,12 +231,18 @@ class _ProductPadViewState extends State<ProductPadView> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 250, 151, 0),
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 10,
+                    ),
                     textStyle: const TextStyle(fontSize: 16),
                   ),
                   child: const Text(
                     'Limpar',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
                   ),
                 ),
                 const SizedBox(width: 20),
@@ -232,12 +250,18 @@ class _ProductPadViewState extends State<ProductPadView> {
                   onPressed: _recognizeText,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 250, 151, 0),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     textStyle: const TextStyle(fontSize: 16),
                   ),
                   child: const Text(
                     'Buscar Produto',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
                   ),
                 ),
               ],
@@ -253,11 +277,17 @@ class _ProductPadViewState extends State<ProductPadView> {
                       children: [
                         const TextSpan(
                           text: 'Preço: ',
-                          style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 250, 151, 0)),
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: Color.fromARGB(255, 250, 151, 0),
+                          ),
                         ),
                         TextSpan(
                           text: _productPrice,
-                          style: const TextStyle(fontSize: 20, color: Color.fromARGB(255, 255, 255, 255)),
+                          style: const TextStyle(
+                            fontSize: 22,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
                         ),
                       ],
                     ),
@@ -268,11 +298,17 @@ class _ProductPadViewState extends State<ProductPadView> {
                       children: [
                         const TextSpan(
                           text: 'Filtro: ',
-                          style: TextStyle(fontSize: 20, color: Color.fromARGB(255, 250, 151, 0)),
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: Color.fromARGB(255, 250, 151, 0),
+                          ),
                         ),
                         TextSpan(
                           text: _productFilter,
-                          style: const TextStyle(fontSize: 20, color: Color.fromARGB(255, 255, 255, 255)),
+                          style: const TextStyle(
+                            fontSize: 22,
+                            color: Color.fromARGB(255, 255, 255, 255),
+                          ),
                         ),
                       ],
                     ),

@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "produtos_itaoleo" "\0"
+            VALUE "CompanyName", "com.example.itaoleo" "\0"
+            VALUE "FileDescription", "Controle de preço dos produtos da Itaoleo." "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "produtos_itaoleo" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "produtos_itaoleo.exe" "\0"
-            VALUE "ProductName", "produtos_itaoleo" "\0"
+            VALUE "OriginalFilename", "Controle de Produtos.exe" "\0"
+            VALUE "ProductName", "Controle de Produtos" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

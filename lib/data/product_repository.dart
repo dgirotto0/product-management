@@ -1,5 +1,6 @@
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/products.dart';
 
 class ProductRepository {
@@ -12,18 +13,20 @@ class ProductRepository {
   }
 
   Future<Database> _initDatabase() async {
-    final path = join('C:', 'Users', 'Daniel', 'OneDrive', 'Documents', 'produtos.db');
     sqfliteFfiInit();
-    
+
+    final directory = await getApplicationDocumentsDirectory();
+    final path = join(directory.path, 'Database/produtos.db');
+
     return openDatabase(
       path,
       version: 1,
-      onCreate: (db, version) {
-      },
+      onCreate: (db, version) {},
     );
   }
 
-  Future<List<Product>> getAllProductsByTable(String tableName, List<String> columns) async {
+  Future<List<Product>> getAllProductsByTable(
+      String tableName, List<String> columns) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(tableName);
 
@@ -32,7 +35,8 @@ class ProductRepository {
     });
   }
 
-  Future<void> insertProduct(Product product, String tableName, List<String> columns) async {
+  Future<void> insertProduct(
+      Product product, String tableName, List<String> columns) async {
     final db = await database;
     final Map<String, dynamic> productMap = product.toMap(columns);
 

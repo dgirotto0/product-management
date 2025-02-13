@@ -14,240 +14,220 @@ class ProductListView extends StatefulWidget {
 }
 
 class _ProductListViewState extends State<ProductListView> {
-  int _visibleItemCount = 10;
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+  int _visibleItemCount = 21;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(190, 16, 15, 15),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Center(
-              child: SizedBox(
-                height: 40,
-                width: 400, 
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: 'Buscar...',
-                          prefixIcon: const Icon(Icons.search, color: Color.fromARGB(255, 250, 151, 0)),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        onSubmitted: (value) {
-                          setState(() {
-                            _searchQuery = value;
-                          });
-                        },
-                      ),
+      body: Consumer<ProductProvider>(
+        builder: (context, productProvider, child) {
+          final products = productProvider.getProductsByTable(widget.tableName);
+          final visibleProducts = products.take(_visibleItemCount).toList();
+          final showLoadMore = _visibleItemCount < products.length;
+
+          return Container(
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                // Grade dos produtos
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 4,
                     ),
-                    const SizedBox(width: 10), // Espaçamento entre o campo e o botão
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _searchQuery = _searchController.text;
-                        });
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final product = visibleProducts[index];
+                        String title = '';
+                        String nonPricePart = '';
+                        String pricePart = '';
+
+                        switch (widget.tableName) {
+                          case 'tb_paletas':
+                            title = '${product.cod} - ${product.modelo}';
+                            nonPricePart = '${product.tipo} • ';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                          case 'tb_filtro_oleo':
+                          case 'tb_filtro_ar':
+                            title = '${product.filtro} - ${product.modelo}';
+                            nonPricePart = '• ';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                          case 'tb_filtro_combustivel':
+                          case 'tb_filtro_cabine':
+                            title = '${product.filtro} - ${product.modelo}';
+                            nonPricePart = '${product.correspondente} • ';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                          case 'tb_filtro_moto':
+                            title = '${product.filtro} - ${product.modelo}';
+                            nonPricePart = '• ';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                          case 'tb_mangueira':
+                            title = '${product.cod} - ${product.modelo}';
+                            nonPricePart = '${product.numero} • ';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                          case 'tb_bujao':
+                            title = '${product.oleo} - ${product.modelo}';
+                            nonPricePart = '${product.tipo} • ';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                          case 'tb_balde_graxa':
+                            title =
+                                '${product.oleo} - ${product.especificacao}';
+                            nonPricePart = '• ';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                          case 'tb_oleo_litro':
+                          case 'tb_atf':
+                            title =
+                                '${product.oleo} - ${product.especificacao}';
+                            nonPricePart = '${product.viscosidade} • ';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                          default:
+                            title = 'Item';
+                            nonPricePart = '';
+                            pricePart =
+                                'R\$${product.valor?.toStringAsFixed(2)}';
+                            break;
+                        }
+
+                        return Card(
+                          color: const Color.fromARGB(190, 16, 15, 15),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                // Área de texto
+                                Expanded(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Título limitado a 2 linhas com reticências
+                                      Text(
+                                        title,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 23,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      // Subtítulo
+                                      RichText(
+                                        text: TextSpan(
+                                          text: nonPricePart,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 21),
+                                          children: [
+                                            TextSpan(
+                                              text: pricePart,
+                                              style: const TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 250, 151, 0),
+                                                fontSize: 21,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // Botão de edição fixo à direita
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Color.fromARGB(255, 250, 151, 0),
+                                  ),
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => ProductEditView(
+                                        product: product,
+                                        productIndex: index,
+                                        tableName: widget.tableName,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 250, 151, 0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                      childCount: visibleProducts.length,
+                    ),
+                  ),
+                ),
+                // Botão "Ver mais..." centralizado abaixo da grade
+                if (showLoadMore)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Center(
+                        widthFactor: 20,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _visibleItemCount += 21;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 250, 151, 0),
+                          ),
+                          child: const Text(
+                            'Ver mais',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                            ),
+                          ),
                         ),
-                      ),
-                      child: const Text(
-                        'Pesquisar',
-                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                  ],
-                ),
-              ),
+                  ),
+              ],
             ),
-          ),
-          Expanded(
-            child: Consumer<ProductProvider>(
-              builder: (context, productProvider, child) {
-                final products = productProvider.getProductsByTable(widget.tableName);
-                final filteredProducts = products.where((product) {
-                  final query = _searchQuery.toLowerCase();
-                  switch (widget.tableName) {
-                    case 'tb_paletas':
-                      return (product.cod?.toLowerCase().contains(query) ?? false) ||
-                            (product.modelo?.toLowerCase().contains(query) ?? false) ||
-                            (product.tipo?.toLowerCase().contains(query) ?? false);
-                    case 'tb_filtro_oleo':
-                    case 'tb_filtro_ar':
-                      return (product.filtro?.toLowerCase().contains(query) ?? false) ||
-                            (product.modelo?.toLowerCase().contains(query) ?? false);
-                    case 'tb_filtro_combustivel':
-                    case 'tb_filtro_cabine':
-                      return (product.filtro?.toLowerCase().contains(query) ?? false) ||
-                            (product.modelo?.toLowerCase().contains(query) ?? false) ||
-                            (product.correspondente?.toLowerCase().contains(query) ?? false);
-                    case 'tb_filtro_moto':
-                      return (product.filtro?.toLowerCase().contains(query) ?? false) ||
-                            (product.modelo?.toLowerCase().contains(query) ?? false);
-                    case 'tb_mangueira':
-                      return (product.cod?.toLowerCase().contains(query) ?? false) ||
-                            (product.modelo?.toLowerCase().contains(query) ?? false) ||
-                            (product.numero?.toLowerCase().contains(query) ?? false);
-                    case 'tb_bujao':
-                      return (product.oleo?.toLowerCase().contains(query) ?? false) ||
-                            (product.modelo?.toLowerCase().contains(query) ?? false) ||
-                            (product.tipo?.toLowerCase().contains(query) ?? false);
-                    case 'tb_balde_graxa':
-                      return (product.oleo?.toLowerCase().contains(query) ?? false) ||
-                            (product.especificacao?.toLowerCase().contains(query) ?? false);
-                    case 'tb_oleo_litro':
-                    case 'tb_atf':
-                      return (product.oleo?.toLowerCase().contains(query) ?? false) ||
-                            (product.especificacao?.toLowerCase().contains(query) ?? false) ||
-                            (product.viscosidade?.toLowerCase().contains(query) ?? false);
-                    default:
-                      return product.toString().toLowerCase().contains(query);
-                  }
-
-                }).toList();
-                final visibleProducts = filteredProducts.take(_visibleItemCount).toList();
-
-                return ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: visibleProducts.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == visibleProducts.length) {
-                      return Visibility(
-                        visible: _visibleItemCount < filteredProducts.length,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 650),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _visibleItemCount += 10;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 250, 151, 0),
-                            ),
-                            child: const Text(
-                              'Ver mais...',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-
-                    final product = visibleProducts[index];
-                    String title = '';
-                    String subtitle = '';
-
-                    switch (widget.tableName) {
-                      case 'tb_paletas':
-                        title = '${product.cod} - ${product.modelo}';
-                        subtitle = '${product.tipo} • R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                      case 'tb_filtro_oleo':
-                      case 'tb_filtro_ar':
-                        title = '${product.filtro} - ${product.modelo}';
-                        subtitle = '• R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                      case 'tb_filtro_combustivel':
-                      case 'tb_filtro_cabine':
-                        title = '${product.filtro} - ${product.modelo}';
-                        subtitle = '${product.correspondente} • R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                      case 'tb_filtro_moto':
-                        title = '${product.filtro} - ${product.modelo}';
-                        subtitle = '• R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                      case 'tb_mangueira':
-                        title = '${product.cod} - ${product.modelo}';
-                        subtitle = '${product.numero} • R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                      case 'tb_bujao':
-                        title = '${product.oleo} - ${product.modelo}';
-                        subtitle = '${product.tipo} • R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                      case 'tb_balde_graxa':
-                        title = '${product.oleo} - ${product.especificacao}';
-                        subtitle = '• R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                      case 'tb_oleo_litro':
-                      case 'tb_atf':
-                        title = '${product.oleo} - ${product.especificacao}';
-                        subtitle = '${product.viscosidade} • R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                      default:
-                        title = 'Item';
-                        subtitle = 'R\$${product.valor?.toStringAsFixed(2)}';
-                        break;
-                    }
-
-                    return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                      color: const Color.fromARGB(190, 16, 15, 15),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(16),
-                        title: Text(
-                          title,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        subtitle: Text(
-                          subtitle,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.edit,
-                            color: Color.fromARGB(255, 250, 151, 0),
-                          ),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => ProductEditView(
-                                product: product,
-                                productIndex: index,
-                                tableName: widget.tableName,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) => ProductAddView(
-              tableName: widget.tableName,
-            ),
+            builder: (context) => ProductAddView(tableName: widget.tableName),
           );
         },
         backgroundColor: const Color.fromARGB(255, 250, 151, 0),
         child: const Icon(
           Icons.add,
-          color: Color.fromARGB(255, 255, 255, 255),
+          color: Colors.white,
         ),
       ),
     );

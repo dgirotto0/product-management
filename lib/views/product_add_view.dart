@@ -29,58 +29,75 @@ class _ProductAddViewState extends State<ProductAddView> {
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: Colors.transparent,
-      content: Container(
-        padding: const EdgeInsets.all(20),
-        constraints: const BoxConstraints(minWidth: 300),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(190, 16, 15, 15),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: const Color.fromARGB(255, 250, 151, 0), 
-            width: 3,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.9),
-              spreadRadius: 2,
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ..._buildFormFields(),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      Product novoProduto = _createProductFromInput();
-                      Provider.of<ProductProvider>(context, listen: false)
-                          .addProduct(novoProduto, widget.tableName);
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 250, 151, 0),
-                  ),
-                  child: const Text(
-                    'Adicionar Produto',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+      content: Stack(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            constraints: const BoxConstraints(minWidth: 400),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(190, 16, 15, 15),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: const Color.fromARGB(255, 250, 151, 0),
+                width: 3,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.9),
+                  spreadRadius: 2,
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Opcional: um SizedBox para dar um espaço no topo, se necessário
+                    const SizedBox(height: 20),
+                    ..._buildFormFields(),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          _formKey.currentState!.save();
+                          Product novoProduto = _createProductFromInput();
+                          Provider.of<ProductProvider>(context, listen: false)
+                              .addProduct(novoProduto, widget.tableName);
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 250, 151, 0),
+                      ),
+                      child: const Text(
+                        'Adicionar Produto',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+          // Botão "x" no canto superior direito:
+          Positioned(
+            right: 2,
+            top: 2,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -123,14 +140,16 @@ class _ProductAddViewState extends State<ProductAddView> {
       case 'tb_balde_graxa':
         fields.addAll([
           _buildTextFormField('Código', (value) => _oleo = value!),
-          _buildTextFormField('Especificação', (value) => _especificacao = value!),
+          _buildTextFormField(
+              'Especificação', (value) => _especificacao = value!),
         ]);
         break;
       case 'tb_oleo_litro':
       case 'tb_atf':
         fields.addAll([
           _buildTextFormField('Óleo', (value) => _oleo = value!),
-          _buildTextFormField('Especificação', (value) => _especificacao = value!),
+          _buildTextFormField(
+              'Especificação', (value) => _especificacao = value!),
           _buildTextFormField('Viscosidade', (value) => _viscosidade = value!),
         ]);
         break;
@@ -155,8 +174,10 @@ class _ProductAddViewState extends State<ProductAddView> {
     return TextFormField(
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 250, 151, 0)),
-        errorStyle: const TextStyle(color: Color.fromARGB(255, 215, 59, 20)),
+        labelStyle: const TextStyle(
+            color: Color.fromARGB(255, 250, 151, 0), fontSize: 18),
+        errorStyle: const TextStyle(
+            color: Color.fromARGB(255, 215, 59, 20), fontSize: 15),
         enabledBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.white),
         ),
@@ -164,7 +185,7 @@ class _ProductAddViewState extends State<ProductAddView> {
           borderSide: BorderSide(color: Color.fromARGB(255, 250, 151, 0)),
         ),
       ),
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.white, fontSize: 20),
       keyboardType: keyboardType,
       validator: (value) {
         if (label == 'Preço') {

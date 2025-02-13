@@ -38,7 +38,8 @@ class ProductProvider with ChangeNotifier {
   Future<void> _loadProductsByTable(String tableName) async {
     try {
       final columns = _tableColumns[tableName]!;
-      final productsFromDatabase = await _repository.getAllProductsByTable(tableName, columns);
+      final productsFromDatabase =
+          await _repository.getAllProductsByTable(tableName, columns);
       _productController.setProducts(tableName, productsFromDatabase);
       notifyListeners();
     } catch (e) {
@@ -60,5 +61,9 @@ class ProductProvider with ChangeNotifier {
       print('Erro ao adicionar produto na tabela $tableName: $e');
       rethrow;
     }
+  }
+
+  List<String> getAllTableNames() {
+    return _tableColumns.keys.toList();
   }
 }
