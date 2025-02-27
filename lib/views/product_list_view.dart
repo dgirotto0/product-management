@@ -19,7 +19,7 @@ class _ProductListViewState extends State<ProductListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(190, 16, 15, 15),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Consumer<ProductProvider>(
         builder: (context, productProvider, child) {
           final products = productProvider.getProductsByTable(widget.tableName);
@@ -111,23 +111,21 @@ class _ProductListViewState extends State<ProductListView> {
                         }
 
                         return Card(
-                          color: const Color.fromARGB(190, 16, 15, 15),
+                          color: Theme.of(context).cardColor,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
                               children: [
-                                // Área de texto
                                 Expanded(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      // Título limitado a 2 linhas com reticências
                                       Text(
                                         title,
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                        style: TextStyle(
+                                          color: Theme.of(context).canvasColor,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 23,
                                         ),
@@ -135,21 +133,21 @@ class _ProductListViewState extends State<ProductListView> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       const SizedBox(height: 4),
-                                      // Subtítulo
                                       RichText(
                                         text: TextSpan(
                                           text: nonPricePart,
-                                          style: const TextStyle(
-                                              color: Colors.white,
+                                          style: TextStyle(
+                                              color:
+                                                  Theme.of(context).canvasColor,
                                               fontSize: 21),
                                           children: [
                                             TextSpan(
                                               text: pricePart,
-                                              style: const TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 250, 151, 0),
-                                                fontSize: 21,
-                                              ),
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                  fontSize: 21,
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ],
                                         ),
@@ -157,11 +155,10 @@ class _ProductListViewState extends State<ProductListView> {
                                     ],
                                   ),
                                 ),
-                                // Botão de edição fixo à direita
                                 IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.edit,
-                                    color: Color.fromARGB(255, 250, 151, 0),
+                                    color: Theme.of(context).primaryColor,
                                   ),
                                   onPressed: () {
                                     showDialog(
@@ -183,7 +180,6 @@ class _ProductListViewState extends State<ProductListView> {
                     ),
                   ),
                 ),
-                // Botão "Ver mais..." centralizado abaixo da grade
                 if (showLoadMore)
                   SliverToBoxAdapter(
                     child: Padding(
@@ -197,13 +193,12 @@ class _ProductListViewState extends State<ProductListView> {
                             });
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 250, 151, 0),
+                            backgroundColor: Theme.of(context).primaryColor,
                           ),
-                          child: const Text(
+                          child: Text(
                             'Ver mais',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Theme.of(context).canvasColor,
                               fontWeight: FontWeight.bold,
                               fontSize: 22,
                             ),
@@ -224,10 +219,10 @@ class _ProductListViewState extends State<ProductListView> {
             builder: (context) => ProductAddView(tableName: widget.tableName),
           );
         },
-        backgroundColor: const Color.fromARGB(255, 250, 151, 0),
-        child: const Icon(
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(
           Icons.add,
-          color: Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
       ),
     );

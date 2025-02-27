@@ -8,16 +8,16 @@ class CustomTitleBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       height: preferredSize.height,
-      color: const Color.fromARGB(190, 16, 15, 15),
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
               'Gestão de Produtos',
               style: TextStyle(
-                color: Color.fromARGB(255, 250, 151, 0),
+                color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -26,13 +26,15 @@ class CustomTitleBar extends StatelessWidget implements PreferredSizeWidget {
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.minimize, color: Colors.white),
+                icon:
+                    Icon(Icons.minimize, color: Theme.of(context).canvasColor),
                 onPressed: () {
                   windowManager.minimize();
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.crop_square, color: Colors.white),
+                icon: Icon(Icons.crop_square,
+                    color: Theme.of(context).canvasColor),
                 onPressed: () async {
                   if (await windowManager.isMaximized()) {
                     windowManager.unmaximize();
@@ -42,7 +44,7 @@ class CustomTitleBar extends StatelessWidget implements PreferredSizeWidget {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.close, color: Colors.white),
+                icon: Icon(Icons.close, color: Theme.of(context).canvasColor),
                 onPressed: () {
                   windowManager.close();
                 },

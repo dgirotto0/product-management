@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../app_colors.dart';
 import '../models/products.dart';
 import '../providers/product_provider.dart';
 
@@ -57,13 +58,15 @@ class _ProductEditViewState extends State<ProductEditView> {
             padding: const EdgeInsets.all(20),
             constraints: const BoxConstraints(minWidth: 400),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(190, 16, 15, 15),
+              color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                  color: const Color.fromARGB(255, 250, 151, 0), width: 3),
+              border:
+                  Border.all(color: Theme.of(context).primaryColor, width: 3),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.9),
+                  color: Theme.of(context)
+                      .scaffoldBackgroundColor
+                      .withOpacity(0.9),
                   spreadRadius: 2,
                   blurRadius: 10,
                   offset: const Offset(0, 4),
@@ -76,19 +79,18 @@ class _ProductEditViewState extends State<ProductEditView> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Opcional: um SizedBox para dar um espaço no topo, se necessário
                     const SizedBox(height: 20),
                     ..._buildFormFields(),
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _saveForm,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 250, 151, 0),
+                        backgroundColor: Theme.of(context).primaryColor,
                       ),
-                      child: const Text(
+                      child: Text(
                         'Salvar',
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 17),
                       ),
@@ -98,12 +100,11 @@ class _ProductEditViewState extends State<ProductEditView> {
               ),
             ),
           ),
-          // Botão "x" no canto superior direito:
           Positioned(
             right: 0,
             top: 0,
             child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
+              icon: Icon(Icons.close, color: Theme.of(context).canvasColor),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -211,17 +212,16 @@ class _ProductEditViewState extends State<ProductEditView> {
       initialValue: initialValue,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(
-            color: Color.fromARGB(255, 250, 151, 0), fontSize: 18),
-        errorStyle: const TextStyle(
-            color: Color.fromARGB(255, 215, 59, 20), fontSize: 15),
-        enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white)),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 250, 151, 0)),
+        labelStyle:
+            TextStyle(color: Theme.of(context).primaryColor, fontSize: 18),
+        errorStyle: const TextStyle(color: AppColors.redError, fontSize: 15),
+        enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).canvasColor)),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Theme.of(context).primaryColor),
         ),
       ),
-      style: const TextStyle(color: Colors.white, fontSize: 20),
+      style: TextStyle(color: Theme.of(context).canvasColor, fontSize: 20),
       keyboardType: keyboardType,
       onSaved: onSaved,
       validator: validator,

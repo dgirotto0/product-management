@@ -35,7 +35,6 @@ class _ProductPadViewState extends State<ProductPadView> {
 
       final imageBase64 = base64Encode(bytes.buffer.asUint8List());
 
-      // Substitua pela sua API Key do Google Cloud
       const apiKey = 'AIzaSyCuNvhvWbttKLKz1GbybaeivEk8XCguEbY';
       final url = Uri.parse(
         'https://vision.googleapis.com/v1/images:annotate?key=$apiKey',
@@ -156,14 +155,14 @@ class _ProductPadViewState extends State<ProductPadView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 57, 56, 56),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Buscar Preço do Produto',
-          style: TextStyle(color: Color.fromARGB(255, 250, 151, 0)),
+          style: TextStyle(color: Theme.of(context).primaryColor),
           textAlign: TextAlign.center,
         ),
-        backgroundColor: const Color.fromARGB(255, 57, 56, 56),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: Center(
         child: Column(
@@ -173,10 +172,10 @@ class _ProductPadViewState extends State<ProductPadView> {
               width: 600,
               height: 400,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.9),
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: const Color.fromARGB(255, 250, 151, 0),
+                  color: Theme.of(context).primaryColor,
                   width: 2,
                 ),
               ),
@@ -186,14 +185,14 @@ class _ProductPadViewState extends State<ProductPadView> {
                   children: [
                     Signature(
                       controller: _controller,
-                      backgroundColor: const Color.fromARGB(190, 16, 15, 15),
+                      backgroundColor: Theme.of(context).cardColor,
                     ),
                     Positioned(
                       top: 10,
                       left: 10,
                       child: IconButton(
                         icon: const Icon(Icons.undo),
-                        color: const Color.fromARGB(255, 250, 151, 0),
+                        color: Theme.of(context).primaryColor,
                         onPressed: _undoLastStroke,
                       ),
                     ),
@@ -202,7 +201,7 @@ class _ProductPadViewState extends State<ProductPadView> {
                       right: 10,
                       child: IconButton(
                         icon: const Icon(Icons.redo),
-                        color: const Color.fromARGB(255, 250, 151, 0),
+                        color: Theme.of(context).primaryColor,
                         onPressed: _canGoForward ? _redoLastStroke : null,
                       ),
                     ),
@@ -213,9 +212,9 @@ class _ProductPadViewState extends State<ProductPadView> {
             const SizedBox(height: 20),
             Text(
               'Texto reconhecido: $_recognizedText',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
-                color: Color.fromARGB(255, 250, 151, 0),
+                color: Theme.of(context).primaryColor,
               ),
             ),
             const SizedBox(height: 20),
@@ -230,17 +229,17 @@ class _ProductPadViewState extends State<ProductPadView> {
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 250, 151, 0),
+                    backgroundColor: Theme.of(context).primaryColor,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
                       vertical: 10,
                     ),
                     textStyle: const TextStyle(fontSize: 16),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Limpar',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 20),
                   ),
@@ -249,17 +248,17 @@ class _ProductPadViewState extends State<ProductPadView> {
                 ElevatedButton(
                   onPressed: _recognizeText,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 250, 151, 0),
+                    backgroundColor: Theme.of(context).primaryColor,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 10,
                     ),
                     textStyle: const TextStyle(fontSize: 16),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Buscar Produto',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 20),
                   ),
@@ -275,18 +274,18 @@ class _ProductPadViewState extends State<ProductPadView> {
                   Text.rich(
                     TextSpan(
                       children: [
-                        const TextSpan(
+                        TextSpan(
                           text: 'Preço: ',
                           style: TextStyle(
                             fontSize: 22,
-                            color: Color.fromARGB(255, 250, 151, 0),
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                         TextSpan(
                           text: _productPrice,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 22,
-                            color: Color.fromARGB(255, 255, 255, 255),
+                            color: Theme.of(context).canvasColor,
                           ),
                         ),
                       ],
@@ -296,18 +295,18 @@ class _ProductPadViewState extends State<ProductPadView> {
                   Text.rich(
                     TextSpan(
                       children: [
-                        const TextSpan(
+                        TextSpan(
                           text: 'Filtro: ',
                           style: TextStyle(
                             fontSize: 22,
-                            color: Color.fromARGB(255, 250, 151, 0),
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                         TextSpan(
                           text: _productFilter,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 22,
-                            color: Color.fromARGB(255, 255, 255, 255),
+                            color: Theme.of(context).canvasColor,
                           ),
                         ),
                       ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'providers/product_provider.dart';
+import 'providers/theme_provider.dart';
 import 'views/product_edit_view.dart';
 import 'views/product_list_view.dart';
 import 'views/product_pad_view.dart';
@@ -11,10 +12,18 @@ void main() {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 
   doWhenWindowReady(() {
-    appWindow.maximize(); // Tenta maximizar a janela
+    appWindow.maximize();
     appWindow.show();
   });
 }
@@ -24,18 +33,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ProductProvider(),
-      child: MaterialApp(
-        title: 'Tabela de Produtos',
-        theme: ThemeData(
-          primaryColor: const Color.fromRGBO(224, 172, 0, 0.9),
-        ),
-        home: const HomeScreen(),
-        routes: {
-          '/pad': (context) => const ProductPadView(),
-        },
-      ),
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    return MaterialApp(
+      title: 'Tabela de Produtos',
+      theme: themeProvider.lightTheme,
+      darkTheme: themeProvider.darkTheme,
+      themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      home: const HomeScreen(),
+      routes: {
+        '/pad': (context) => const ProductPadView(),
+      },
     );
   }
 }
@@ -51,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  // Lista com os nomes de todas as tabelas (na mesma ordem das abas, sem contar a aba "Home")
   final List<String> _allTables = [
     'tb_paletas',
     'tb_filtro_oleo',
@@ -74,9 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           centerTitle: true,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.note_alt,
-              color: Color.fromARGB(255, 250, 151, 0),
+              color: Theme.of(context).primaryColor,
               size: 55,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -84,19 +90,36 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushNamed(context, '/pad');
             },
           ),
-          title: const Text(
+          title: Text(
             'Gestão de Produtos',
             style: TextStyle(
-              color: Color.fromARGB(255, 250, 151, 0),
+              color: Theme.of(context).primaryColor,
               fontWeight: FontWeight.bold,
             ),
           ),
-          backgroundColor: const Color.fromARGB(190, 16, 15, 15),
+          actions: [
+            Consumer<ThemeProvider>(
+              builder: (context, themeProvider, _) {
+                return IconButton(
+                  icon: Icon(
+                    themeProvider.isDarkMode
+                        ? Icons.light_mode
+                        : Icons.dark_mode,
+                    color: Theme.of(context).primaryColor,
+                    size: 30,
+                  ),
+                  onPressed: () {
+                    themeProvider.toggleTheme();
+                  },
+                );
+              },
+            ),
+          ],
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(110),
             child: Column(
               children: [
-                // Campo de busca geral
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 500, vertical: 8),
@@ -109,12 +132,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             controller: _searchController,
                             decoration: InputDecoration(
                               hintText: 'Buscar Geral...',
-                              prefixIcon: const Icon(
+                              prefixIcon: Icon(
                                 Icons.search,
-                                color: Color.fromARGB(255, 250, 151, 0),
+                                color: Theme.of(context).primaryColor,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20),
                                 borderSide: BorderSide.none,
@@ -124,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               setState(() {
                                 _searchQuery = value;
                               });
-                              // Redireciona para a aba "Home"
                               DefaultTabController.of(context).animateTo(0);
                             },
                           ),
@@ -140,16 +162,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 DefaultTabController.of(context).animateTo(0);
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromARGB(255, 250, 151, 0),
+                                backgroundColor: Theme.of(context).primaryColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Pesquisar',
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 17),
+                                    color: Theme.of(context).canvasColor,
+                                    fontSize: 17),
                               ),
                             );
                           },
@@ -159,9 +181,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 // Aba (TabBar)
-                const TabBar(
+                TabBar(
                   isScrollable: true,
-                  tabs: [
+                  tabs: const [
                     Tab(text: 'Home'),
                     Tab(text: 'Paletas'),
                     Tab(text: 'Filtro Óleo'),
@@ -175,22 +197,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     Tab(text: 'Óleo Litro'),
                     Tab(text: 'ATF'),
                   ],
-                  labelColor: Color.fromARGB(255, 250, 151, 0),
-                  indicatorColor: Color.fromARGB(255, 250, 151, 0),
-                  unselectedLabelColor: Colors.white,
-                  labelStyle: TextStyle(fontSize: 18),
+                  labelColor: Theme.of(context).primaryColor,
+                  indicatorColor: Theme.of(context).primaryColor,
+                  unselectedLabelColor: Theme.of(context).canvasColor,
+                  labelStyle: const TextStyle(fontSize: 18),
                   tabAlignment: TabAlignment.center,
                 ),
               ],
             ),
           ),
         ),
-        // As abas: a primeira é a "Home" (resultados unificados) e as demais são as listas específicas.
         body: TabBarView(
           physics: const BouncingScrollPhysics(),
           children: [
-            _buildSearchResults(
-                context), // Aba "Home" com os resultados da pesquisa
+            _buildSearchResults(context),
             const ProductListView(tableName: 'tb_paletas'),
             const ProductListView(tableName: 'tb_filtro_oleo'),
             const ProductListView(tableName: 'tb_filtro_ar'),
@@ -208,24 +228,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Método que reúne todos os produtos de todas as tabelas e filtra usando a mesma lógica do seu "buscar"
   Widget _buildSearchResults(BuildContext context) {
     final productProvider =
         Provider.of<ProductProvider>(context, listen: false);
     List<Map<String, dynamic>> filteredResults = [];
     final query = _searchQuery.toLowerCase();
 
-    // Se não houver pesquisa, exibe uma mensagem
     if (query.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'Digite sua pesquisa na barra acima',
-          style: TextStyle(color: Colors.white, fontSize: 18),
+          style: TextStyle(color: Theme.of(context).canvasColor, fontSize: 18),
         ),
       );
     }
 
-    // Percorre cada tabela e aplica a lógica de filtragem
     for (final table in _allTables) {
       final products = productProvider.getProductsByTable(table);
       for (int i = 0; i < products.length; i++) {
@@ -281,14 +298,13 @@ class _HomeScreenState extends State<HomeScreen> {
             matches = product.toString().toLowerCase().contains(query);
         }
         if (matches) {
-          // Armazena também o índice "i" do produto na tabela
           filteredResults.add({'table': table, 'product': product, 'index': i});
         }
       }
     }
 
     return Container(
-      color: const Color.fromARGB(190, 16, 15, 15),
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: GridView.builder(
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.all(16),
@@ -303,8 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final item = filteredResults[index];
           final product = item['product'];
           final table = item['table'] as String;
-          final productIndex =
-              item['index'] as int; // Índice real do produto na tabela
+          final productIndex = item['index'] as int;
 
           String title = '';
           String nonPricePart = '';
@@ -362,22 +377,20 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           return Card(
-            color: const Color.fromARGB(190, 16, 15, 15),
+            color: Theme.of(context).cardColor,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  // Área de texto
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Título limitado a 2 linhas com reticências
                         Text(
                           title,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).canvasColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 23,
                           ),
@@ -385,19 +398,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
-                        // Subtítulo
                         RichText(
                           text: TextSpan(
                             text: nonPricePart,
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 21),
+                            style: TextStyle(
+                                color: Theme.of(context).canvasColor,
+                                fontSize: 21),
                             children: [
                               TextSpan(
                                 text: pricePart,
-                                style: const TextStyle(
-                                  color: Color.fromARGB(255, 250, 151, 0),
-                                  fontSize: 21,
-                                ),
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 21,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -405,11 +418,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  // Botão de edição fixo à direita
                   IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.edit,
-                      color: Color.fromARGB(255, 250, 151, 0),
+                      color: Theme.of(context).primaryColor,
                     ),
                     onPressed: () {
                       showDialog(
